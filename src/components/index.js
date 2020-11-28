@@ -17,10 +17,8 @@ function Calendar() {
     viewType,
   } = UseCalendar(getInitialSettings())
 
-  const handleChangeTimeZone = ({ target }) => {
-    changeTimeZone(target.value);
-  }
-  const handleChangeViewType = ({ target }) => changeViewType(target.value)
+  const handleChangeTimeZone = ({ target }) => changeTimeZone(target.value);
+  const handleChangeViewType = ({ target }) => changeViewType(target.value);
 
   return (
     <div className="calendar-wrapper">

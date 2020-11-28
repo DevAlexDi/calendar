@@ -1,6 +1,7 @@
 import moment from 'moment';
 
-export const currentDays = (currentDate, daysCount, viewTypeName) => {
+export const getCurrentDays = (currentDate, daysCount, viewTypeName) => {
+
   const firstDateOfMonth = moment(currentDate).startOf(viewTypeName)
   const firstDayOfGrid = firstDateOfMonth.subtract(firstDateOfMonth.day(), 'days');
 
