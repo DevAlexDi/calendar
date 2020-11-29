@@ -15,7 +15,7 @@ function Calendar() {
     setPrevDate,
     timeZone,
     viewType,
-  } = UseCalendar(getInitialSettings())
+  } = UseCalendar(getInitialSettings());
 
   const handleChangeTimeZone = ({ target }) => changeTimeZone(target.value);
   const handleChangeViewType = ({ target }) => changeViewType(target.value);

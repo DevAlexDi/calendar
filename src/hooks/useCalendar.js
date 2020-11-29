@@ -5,60 +5,49 @@ import { VIEW_TYPES } from '../constants/calendarSettings';
 import DATE_FORMAT from '../constants/date';
 import { toQueryString } from '../helpers/toQueryString';
 
-const useCalendarSettings = (settings) => {
-  const [timeZone, changeTimeZone] = useState(settings.timeZone)
-  const [viewType, changeViewType] = useState(settings.viewType)
+export const UseCalendar = (settings) => {
+  const [state, setState] = useState({
+    currentDate: settings.date,
+    viewType: settings.viewType,
+    timeZone: settings.timeZone,
+  });
 
-  return { timeZone, changeTimeZone, viewType, changeViewType }
-}
+  const changeTimeZone = (timeZone) => setState({
+    ...state,
+    timeZone
+  });
 
-const useCalendarLogic = (viewType, timeZone, initialDate) => {
-  const [currentDate, setCurrentDate] = useState(initialDate);
+  const changeViewType = (viewType) => setState({
+    ...state,
+    currentDate: moment(),
+    viewType
+  });
+
+  const currentViewType = useMemo(() => VIEW_TYPES.find((item) => {
+    return item.name === state.viewType;
+  }), [state.viewType]);
 
   const currentDays = useMemo(() => {
-    return getCurrentDays(currentDate, viewType.daysCount, viewType.name, timeZone);
-  }, [currentDate, viewType, timeZone]);
+    return getCurrentDays(state.currentDate, currentViewType.daysCount, currentViewType.name, state.timeZone);
+  }, [state, currentViewType]);
 
-  const setPrevDate = () => setCurrentDate(moment(currentDate).subtract(1, viewType.name));
+  const setPrevDate = () => setState({
+    ...state,
+    currentDate: moment(state.currentDate).subtract(1, currentViewType.name)
+  });
 
-  const setNextDate = () => setCurrentDate(moment(currentDate).add(1, viewType.name));
+  const setNextDate = () => setState({
+    ...state,
+    currentDate: moment(state.currentDate).add(1, currentViewType.name)
+  });
 
   useEffect(() => {
     const queryParamsString = toQueryString({
-      viewType: viewType.name,
-      currentDate: moment(currentDate.format()).format(DATE_FORMAT)
+      viewType: state.viewType,
+      currentDate: moment(state.currentDate).format(DATE_FORMAT)
     });
     window.history.replaceState(null, null, `?${queryParamsString}`);
-  }, [currentDate, viewType.name]);
+  }, [state.currentDate, state.viewType]);
 
-  useEffect(() => {
-    setCurrentDate(moment());
-  }, [viewType]);
-
-  useEffect(function () {
-    setCurrentDate(moment(currentDate));
-  }, [timeZone]);
-
-  return { currentDate, currentDays, setPrevDate, setNextDate, setCurrentDate }
-}
-
-
-export const UseCalendar = (settings) => {
-  const {
-    timeZone, changeTimeZone, viewType, changeViewType
-  } = useCalendarSettings(settings);
-
-  const currentViewType = useMemo(() => VIEW_TYPES.find((item) => {
-    return item.name === viewType;
-  }), [viewType]);
-
-  const {
-    setDefault,
-    updateCalendar,
-    ...calendarData
-  } = useCalendarLogic(currentViewType, timeZone, settings.date);
-
-  return {
-    viewType, timeZone, changeTimeZone, changeViewType, ...calendarData,
-  }
+  return { ...state, currentDays, setPrevDate, setNextDate, changeViewType, changeTimeZone }
 }
