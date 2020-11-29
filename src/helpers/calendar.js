@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const getCurrentDays = (currentDate, daysCount, viewTypeName) => {
+export const getCurrentDays = (currentDate, daysCount, viewTypeName, timeZone) => {
 
   const firstDateOfMonth = moment(currentDate).startOf(viewTypeName)
   const firstDayOfGrid = firstDateOfMonth.subtract(firstDateOfMonth.day(), 'days');
@@ -11,9 +11,11 @@ export const getCurrentDays = (currentDate, daysCount, viewTypeName) => {
     return {
       momentDate: date,
       isVisible: date.isSame(currentDate, viewTypeName),
-      isToday: isToday(date),
+      isToday: isToday(date, timeZone),
     }
   });
 }
 
-export const isToday = (date) => moment().isSame(moment(date), 'day');
+export const isToday = (date, timeZone) => {
+  return moment().tz(timeZone).isSame(moment(date).tz(timeZone), 'day')
+};

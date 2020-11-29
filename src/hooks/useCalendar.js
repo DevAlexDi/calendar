@@ -15,24 +15,13 @@ const useCalendarSettings = (settings) => {
 const useCalendarLogic = (viewType, timeZone, initialDate) => {
   const [currentDate, setCurrentDate] = useState(initialDate);
 
-  const currentDateMoment = useMemo(
-    () => moment(currentDate).tz(timeZone),
-    [currentDate, timeZone]
-  );
-
   const currentDays = useMemo(() => {
-    return getCurrentDays(currentDate, viewType.daysCount, viewType.name);
-  }, [currentDate, viewType]);
+    return getCurrentDays(currentDate, viewType.daysCount, viewType.name, timeZone);
+  }, [currentDate, viewType, timeZone]);
 
-  const setPrevDate = () => setCurrentDate(currentDateMoment.subtract(1, viewType.name));
+  const setPrevDate = () => setCurrentDate(moment(currentDate).subtract(1, viewType.name));
 
-  const setNextDate = () => setCurrentDate(currentDateMoment.add(1, viewType.name));
-
-  const updateCalendar = () => {
-    const currentDate = currentDateMoment;
-
-    setCurrentDate(currentDate);
-  }
+  const setNextDate = () => setCurrentDate(moment(currentDate).add(1, viewType.name));
 
   useEffect(() => {
     const queryParamsString = toQueryString({
@@ -42,17 +31,15 @@ const useCalendarLogic = (viewType, timeZone, initialDate) => {
     window.history.replaceState(null, null, `?${queryParamsString}`);
   }, [currentDate, viewType.name]);
 
-
-
   useEffect(() => {
-    setCurrentDate(moment().tz(timeZone));
+    setCurrentDate(moment());
   }, [viewType]);
 
   useEffect(function () {
-    updateCalendar()
+    setCurrentDate(moment(currentDate));
   }, [timeZone]);
 
-  return { currentDate, currentDays, setPrevDate, setNextDate, updateCalendar }
+  return { currentDate, currentDays, setPrevDate, setNextDate, setCurrentDate }
 }
 
 
