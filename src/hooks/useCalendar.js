@@ -19,7 +19,7 @@ export const UseCalendar = (settings) => {
 
   const changeViewType = (viewType) => setState({
     ...state,
-    currentDate: moment(),
+    currentDate: moment().tz(state.timeZone),
     viewType
   });
 
@@ -33,12 +33,12 @@ export const UseCalendar = (settings) => {
 
   const setPrevDate = () => setState({
     ...state,
-    currentDate: moment(state.currentDate).subtract(1, currentViewType.name)
+    currentDate: moment(state.currentDate).tz(state.timeZone).subtract(1, currentViewType.name)
   });
 
   const setNextDate = () => setState({
     ...state,
-    currentDate: moment(state.currentDate).add(1, currentViewType.name)
+    currentDate: moment(state.currentDate).tz(state.timeZone).add(1, currentViewType.name)
   });
 
   useEffect(() => {

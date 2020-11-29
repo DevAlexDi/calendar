@@ -11,7 +11,7 @@ const getInitialSettings = () => {
   return {
     ...DEFAULT_SETTINGS,
     ...(!!viewType && { viewType }),
-    date: momentedDate.isValid() ? momentedDate : moment()
+    date: momentedDate.isValid() ? momentedDate : moment().tz(DEFAULT_SETTINGS.timeZone)
   }
 }
 
